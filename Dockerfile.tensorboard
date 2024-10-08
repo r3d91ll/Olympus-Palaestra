@@ -1,0 +1,14 @@
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Install TensorBoard
+RUN pip install --no-cache-dir tensorboard
+
+# Make port 6006 available for TensorBoard
+EXPOSE 6006
+
+# Run TensorBoard when the container launches
+CMD ["tensorboard", "--logdir", "/app/logs", "--bind_all"]

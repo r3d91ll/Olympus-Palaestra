@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  palaestra:
+    build:
+      context: .
+      dockerfile: Dockerfile.palaestra
+    volumes:
+      - ./palaestra:/app/palaestra
+      - ./data:/app/data
+      - ./logs:/app/logs
+    environment:
+      - PALAESTRA_CONFIG=/app/palaestra/config/settings.json
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  tensorboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.tensorboard
+    volumes:
+      - ./logs:/app/logs
+    ports:
+      - "8006:6006"  # Expose TensorBoard port
+
+volumes:
+  data:
+  logs:

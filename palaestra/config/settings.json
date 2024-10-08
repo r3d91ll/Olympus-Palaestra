@@ -1,0 +1,93 @@
+{
+  "paths": {
+    "models_to_train_dir": "/app/data/models",
+    "preprocessed_dataset": "/app/data/preprocessed_dataset.jsonl",
+    "logs_dir": "/app/logs",
+    "checkpoints_dir": "/app/data/checkpoints",
+    "trained_models_dir": "/app/data/trained_models",
+    "datasets_dir": "/app/data/datasets"
+  },
+  "model": {
+    "name": "gpt2",
+    "special_tokens": {
+      "pad_token": "[PAD]",
+      "bos_token": "[BOS]",
+      "eos_token": "[EOS]"
+    }
+  },
+  "huggingface": {
+    "model_repo": "gpt2",
+    "dataset_repo": "your_dataset_repo_name",
+    "use_auth_token": false
+  },
+  "training": {
+    "batch_size": 4,
+    "validation_batch_size": 1,
+    "epochs": 3,
+    "num_workers": 4,
+    "checkpoint_interval": 1000,
+    "logging_interval": 100,
+    "use_amp": true,
+    "max_sequence_length": 1024,
+    "warmup_steps": 0,
+    "validation_split": 0.1,
+    "weight_decay": 0.01
+  },
+  "analyzer": {
+    "num_samples": 1000,
+    "output_dir": "/app/data/analyzer_output"
+  },
+  "preprocessor": {
+    "input_file": "/app/data/raw_dataset.json",
+    "output_file": "/app/data/preprocessed_dataset.jsonl",
+    "mappings": [
+      {
+        "output_field": "input_text",
+        "json_path": "$.input"
+      },
+      {
+        "output_field": "target_text",
+        "json_path": "$.output"
+      }
+    ]
+  },
+  "deepspeed": {
+    "train_batch_size": 4,
+    "train_micro_batch_size_per_gpu": 1,
+    "steps_per_print": 100,
+    "optimizer": {
+      "type": "AdamW",
+      "params": {
+        "lr": 5e-5,
+        "betas": [0.9, 0.999],
+        "eps": 1e-8,
+        "weight_decay": 0.01
+      }
+    },
+    "scheduler": {
+      "type": "WarmupLR",
+      "params": {
+        "warmup_min_lr": 0,
+        "warmup_max_lr": 5e-5,
+        "warmup_num_steps": 100
+      }
+    },
+    "gradient_clipping": 1.0,
+    "fp16": {
+      "enabled": true
+    },
+    "zero_optimization": {
+      "stage": 2,
+      "offload_optimizer": {
+        "device": "cpu",
+        "pin_memory": true
+      },
+      "allgather_partitions": true,
+      "allgather_bucket_size": 2e8,
+      "overlap_comm": true,
+      "reduce_scatter": true,
+      "reduce_bucket_size": 2e8,
+      "contiguous_gradients": true
+    }
+  }
+}

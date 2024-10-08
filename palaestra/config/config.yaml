@@ -1,0 +1,25 @@
+paths:
+  models_dir: "/app/data/models"
+  paideis_dir: "/app/data/models/paideis"
+  agon_dir: "/app/data/models/agon"
+  agora_dir: "/app/data/models/agora"
+  preprocessed_dataset: "/app/data/preprocessed_dataset.jsonl"
+  logs_dir: "/app/logs"
+  checkpoints_dir: "/app/data/checkpoints"
+  datasets_dir: "/app/data/datasets"
+  deepspeed_config: "/app/palaestra/utils/deepspeed/ds_config.json"
+
+model:
+  name: "llama-3.2-3b-instruct"
+  special_tokens:
+    pad_token: "[PAD]"
+    bos_token: "[BOS]"
+    eos_token: "[EOS]"
+
+huggingface:
+  model_repo: "llama-3.2-3b-instruct"
+  dataset_repo: "your_dataset_repo_name"
+  use_auth_token: false
+  username: "your_huggingface_username"
+
+# ... rest of your configuration ...
