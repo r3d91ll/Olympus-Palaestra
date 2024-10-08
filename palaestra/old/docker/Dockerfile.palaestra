@@ -1,0 +1,50 @@
+# Dockerfile.palaestra
+# Use NVIDIA's PyTorch container as the base image (comes with PyTorch, CUDA, cuDNN)
+FROM nvcr.io/nvidia/pytorch:23.09-py3
+
+# Set the non-interactive frontend
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install additional necessary system packages and clean up
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        wget \
+        curl \
+        git \
+        python3-dev \
+        build-essential \
+        ca-certificates \
+        gnupg \
+        software-properties-common \
+    && rm -rf /var/lib/apt/lists/*
+
+# Update pip
+RUN python -m pip install --upgrade pip
+
+# Install additional required Python packages
+RUN pip install --no-cache-dir \
+    transformers \
+    datasets \
+    unsloth \
+    deepspeed \
+    tensorboard \
+    jsonpath_rw \
+    pyyaml
+
+# Create a non-root user 'appuser' and group 'paides'
+RUN groupadd -g 1000 paides && \
+    useradd -m -u 1000 -g paides appuser
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the application code into the container and set ownership
+COPY --chown=appuser:paides . /app
+
+# Switch to the non-root user
+USER appuser
+
+# For debugging and troubleshooting, boot to the CLI
+CMD ["bash"]
+
+# docker exec -it palaestra_container /bin/bash

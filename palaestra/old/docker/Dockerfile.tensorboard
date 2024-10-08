@@ -1,0 +1,38 @@
+# Dockerfile.tensorboard
+
+# Use Ubuntu 22.04 as the base image
+FROM ubuntu:22.04
+
+# Set the non-interactive frontend
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install necessary packages and clean up
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        python3 \
+        python3-pip \
+        python3-setuptools \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install TensorBoard using pip
+RUN pip3 install --no-cache-dir tensorboard
+
+# Create a non-root user 'appuser' and group 'paides'
+RUN groupadd -g 1000 paides && \
+    useradd -m -u 1000 -g paides appuser
+
+# Create a directory for logs and set permissions
+RUN mkdir -p /logs && \
+    chown appuser:paides /logs
+
+# Expose port 8006 for TensorBoard
+EXPOSE 8006
+
+# Switch to the non-root user
+USER appuser
+
+# Set the working directory to the logs directory
+WORKDIR /logs
+
+# Set the entrypoint to run TensorBoard, pointing to the shared log directory
+ENTRYPOINT ["tensorboard", "--logdir", "/logs", "--host", "0.0.0.0", "--port", "8006"]

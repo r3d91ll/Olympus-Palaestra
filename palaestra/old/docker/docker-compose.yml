@@ -1,0 +1,48 @@
+# Gymnasia docker-compose.yml
+services:
+  tensorboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.tensorboard
+    container_name: tensorboard_container
+    volumes:
+      - type: bind
+        source: ../logs
+        target: /logs
+    ports:
+      - "8006:8006"
+    networks:
+      - training_network
+    user: "1000:1000"  # Run as appuser (UID 1000) and group paides (GID 1000)
+
+  palaestra:
+    build:
+      context: ./
+      dockerfile: Dockerfile.palaestra
+    volumes:
+      - /home/todd/ML_Lab/gym/gymnasia:/app
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - NCCL_BLOCKING_WAIT=1
+      - NCCL_ASYNC_ERROR_HANDLING=1
+      - NCCL_TIMEOUT=1800
+      - NCCL_DEBUG=WARN
+      - NCCL_DEBUG_SUBSYS=ALL
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 2
+              capabilities: [gpu]
+    networks:
+      - training_network
+    user: "1000:1000"  # Run as appuser (UID 1000) and group paides (GID 1000)
+    stdin_open: true   # Allows you to attach to the container's stdin
+    tty: true          # Allocates a pseudo-TTY for the container
+
+networks:
+  training_network:
+    driver: bridge
+# deepspeed scripts/palaestra.py --config config/config.yaml

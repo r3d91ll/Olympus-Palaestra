@@ -1,0 +1,22 @@
+paths:
+  trained_models_dir: '/app/Aglaurus'
+  models_to_train_dir: '/app/propylon/'
+  preprocessed_dataset: '/app/datasets/weaviate/WeaviateGraphQLGorilla/all-clean-WeaviateGorillaGQLDataset-preprocessed_data.jsonl'
+  logs_dir: '/app/logs'
+  checkpoints_dir: '/app/checkpoints'
+training:
+  batch_size: 12
+  validation_batch_size: 2
+  epochs: 10
+  learning_rate: 0.0001
+  validation_split: 0.1
+  max_sequence_length: 1028
+  num_workers: 8
+  checkpoint_interval: 1000
+  logging_interval: 100
+  use_amp: true
+  use_cache: false
+model: 
+  name: 'Llama-3.2-3B-Instruct'
+  special_tokens:
+    pad_token: '<pad>'

@@ -1,0 +1,12 @@
+input_file: '/app/datasets/weaviate/WeaviateGraphQLGorilla/all-clean-WeaviateGorillaGQLDataset.json'
+output_file: '/app/datasets/weaviate/WeaviateGraphQLGorilla/all-clean-WeaviateGorillaGQLDataset-preprocessed_data.jsonl'
+mappings:
+  - output_field: 'input_text'
+    json_path: '$.input'
+  - output_field: 'target_text'
+    json_path: '$.output'
+  # Include additional mappings if needed
+  - output_field: 'nlcommand'
+    json_path: '$.nlcommand'
+  - output_field: 'api_reference'
+    json_path: '$.apiRef'
